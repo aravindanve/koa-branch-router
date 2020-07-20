@@ -1,5 +1,7 @@
 # Koa branch router
 
+[![Coverage Status](https://coveralls.io/repos/aravindanve/koa-branch-router/badge.svg?branch=master)](https://coveralls.io/r/aravindanve/koa-branch-router?branch=master)
+
 Koa branch router is a simple radix tree (-ish) router for koa.
 
 ## Why?

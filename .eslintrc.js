@@ -26,5 +26,6 @@ module.exports = {
       },
     ],
     'no-trailing-spaces': 'warn',
+    'no-unused-vars': ['warn', { ignoreRestSiblings: true }],
   },
 };
