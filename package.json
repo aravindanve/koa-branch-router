@@ -1,0 +1,51 @@
+{
+  "name": "koa-branch-router",
+  "version": "1.0.0-beta.0",
+  "description": "Radix tree like router middleware for koa",
+  "main": "lib/index.js",
+  "types": "index.d.ts",
+  "files": [
+    "lib",
+    "index.d.ts"
+  ],
+  "scripts": {
+    "test": "mocha test/**/*.spec.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aravindanve/koa-branch-router.git"
+  },
+  "keywords": [
+    "koa",
+    "middleware",
+    "route",
+    "router",
+    "radix",
+    "tree",
+    "trie"
+  ],
+  "author": "Aravindan Ve",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aravindanve/koa-branch-router/issues"
+  },
+  "homepage": "https://github.com/aravindanve/koa-branch-router#readme",
+  "engines": {
+    "node": ">= 12.8.0"
+  },
+  "dependencies": {
+    "debug": "^4.1.1",
+    "koa-compose": "^4.1.0"
+  },
+  "devDependencies": {
+    "@types/koa": "^2.11.3",
+    "chai": "^4.2.0",
+    "eslint": "^7.5.0",
+    "eslint-config-prettier": "^6.11.0",
+    "koa": "^2.13.0",
+    "mocha": "^8.0.1",
+    "nyc": "^15.1.0",
+    "prettier": "^2.0.5",
+    "typescript": "^3.9.7"
+  }
+}
