@@ -39,7 +39,9 @@ describe('CaptureParamFragment', () => {
       .expect(fragment.layers('GET', 'foo', {}))
       .to.deep.eq([{ params: { name: 'foo' } }, { params: { name: 'foo' } }]);
 
-    chai.expect(layer.layers).to.have.been.with('GET', '', { name: 'foo' });
+    chai
+      .expect(layer.layers)
+      .to.have.been.called.with('GET', '', { name: 'foo' });
   });
 
   it('.layers() captures empty param if the url begins with a slash', () => {
@@ -53,7 +55,9 @@ describe('CaptureParamFragment', () => {
       .expect(fragment.layers('GET', '/foo', {}))
       .to.deep.eq([{ params: { name: '' } }, { params: { name: '' } }]);
 
-    chai.expect(layer.layers).to.have.been.with('GET', 'foo', { name: '' });
+    chai
+      .expect(layer.layers)
+      .to.have.been.called.with('GET', 'foo', { name: '' });
   });
 
   it('.layers() captures params and gobbles exactly one slash', () => {
@@ -67,13 +71,17 @@ describe('CaptureParamFragment', () => {
       .expect(fragment.layers('GET', 'foo/', {}))
       .to.deep.eq([{ params: { name: 'foo' } }, { params: { name: 'foo' } }]);
 
-    chai.expect(layer.layers).to.have.been.with('GET', '', { name: 'foo' });
+    chai
+      .expect(layer.layers)
+      .to.have.been.called.with('GET', '', { name: 'foo' });
 
     chai
       .expect(fragment.layers('GET', 'foo//', {}))
       .to.deep.eq([{ params: { name: 'foo' } }, { params: { name: 'foo' } }]);
 
-    chai.expect(layer.layers).to.have.been.with('GET', '/', { name: 'foo' });
+    chai
+      .expect(layer.layers)
+      .to.have.been.called.with('GET', '/', { name: 'foo' });
   });
 
   it('.layers() captures params and passes down the rest of the path', () => {
@@ -92,7 +100,7 @@ describe('CaptureParamFragment', () => {
 
     chai
       .expect(layer.layers)
-      .to.have.been.with('GET', 'bar/43', { name: 'fiona' });
+      .to.have.been.called.with('GET', 'bar/43', { name: 'fiona' });
   });
 
   it('.layers() does not capture if capture key is empty', () => {
