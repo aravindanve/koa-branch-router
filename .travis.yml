@@ -15,6 +15,5 @@ script:
 after_script:
 - nyc report --reporter=text-lcov | coveralls
 - nyc check-coverage --lines 50
-- semantic-release
 notifications:
   email: false
