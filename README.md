@@ -5,14 +5,13 @@ Koa branch router is a simple radix tree (-ish) router for koa.
 ## Why?
 
 - There seem to be no radix tree routers with nested router support (at the time of writing).
-- Popular routers handle middlewares in an inconvenient way. see [Middleware Routing](#middleware-routing).
+- Popular routers handle middlewares in an inconvenient way. See [Middleware Routing](#middleware-routing).
 
 ## Features
 
 - Express-style routing using verbs like `router.get`, `router.put`, `router.post`, etc.
 - Nested routes and middlewares.
 - Path params and wildcard capturing.
-- Support for `405 method not allowed` (Not yet supported)
 
 ## Usage
 
@@ -64,6 +63,32 @@ router
     .get('/:imageId', getImage);
 ```
 
+If you dont want this behaviour, you should use a route fragment.
+
+
+```js
+// the path `/users/42/images`
+
+router
+  .use('/users')
+    .use(new Router.Fragment()
+      use(userMiddleware)) // <-- called
+
+      // fragments don't add a routing boundary and
+      // behave like a middleware registered on the
+      // parent router.
+
+  .use('/users', new Router()
+    .use(userMiddleware) // <-- not called
+    .get('/', listUsers)
+    .get('/:userId', getUser)
+
+  .use('/users/:userId/images', new Router()
+    .use(imageMiddleware) // <-- called
+    .get('/', listImages) // <-- called
+    .get('/:imageId', getImage);
+```
+
 ## Nested Routers
 
 You may nest routers.
@@ -74,7 +99,7 @@ const userRouter = new Router()
   .use('/', listUsers) // becomes `/users/`
   .use('/:id', getUser); // becomes `/users/:id`
 
-const tokenRouter = new Router({ path: '/token' })
+const tokenRouter = new Router({ prefix: '/token' })
   .use('/', listUsers) // becomes `/auth/tokens/`
   .use('/:id', getUser); // becomes `/auth/tokens/:id`
 
@@ -140,8 +165,11 @@ router.all('/users/*', ...)
 ## Quirks
 
 - Captured parameters are decoded using `decodeURIComponent`, whereas wildcard captures are not.
-- Consecutive slashes are treated as a single slash `///` => `/`
 - Named parameters assume trailing slash `:userId` => `:userId/`
+
+## Roadmap
+
+- Support for `405 method not allowed`
 
 ## API
 
@@ -151,14 +179,13 @@ Initialize a new router.
 
 #### Options
 
-| Option | Default | Description |
-| - | - | - |
-| `options.path` | `''` | Router prefix |
-| `options.caseSensitive` | `false` | Case sensitive paths |
-| `options.strict` | `false` | Strict matching of trailing slashes |
+| Option                   | Default  | Description                         |
+| ------------------------ | -------- | ----------------------------------- |
+| `options.prefix`         | `''`     | Router prefix                       |
+| `options.caseSensitive`  | `false`  | Case sensitive paths                |
+| `options.strict`         | `false`  | Treat `/foo` and `/foo/` as different urls |
 
-
-### .verb()
+### router.verb()
 
 Registers handlers for path. Supported verbs are:
 
@@ -182,7 +209,7 @@ router.get(
   (ctx) => ...);
 ```
 
-### .use()
+### router.use()
 
 Registers middleware for path
 
@@ -201,19 +228,28 @@ router.use(parseToken, authorize);
 router.use('/users', authUser);
 ```
 
-### .routes()
+### router.routes()
 Returns router middleware.
 
 ```js
 app.use(router.routes());
 ```
 
+### new Router.Fragment([options])
+
+Initialize a new route fragment. Fragments don't add a routing boundary and behave like a middleware registered on the parent router. See [Middleware Routing](#middleware-routing).
+
+Accepts the same options as a router. See [Router Options](#options)
+
+The API is again similar to the router except that there is no `.routes()` method. Only routers can be mounted on apps.
+
+
 ### ctx.params
 This object contains key-value pairs of named route parameters.
 
 ```js
 // GET /user/42
-router.get('/user/:name', function() {
+router.get('/user/:name', (ctx) => {
   ctx.params.name // => '42'
 });
 ```
