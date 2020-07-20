@@ -1,0 +1,13 @@
+# compiled output
+node_modules
+package-lock.json
+dist
+
+# coverage
+coverage
+
+# migrations
+migrations
+
+# config files at root
+/*.js
