@@ -1,4 +1,4 @@
-# Koa branch router
+# Koa branch router (Beta)
 
 [![Coverage Status](https://coveralls.io/repos/aravindanve/koa-branch-router/badge.svg?branch=master)](https://coveralls.io/r/aravindanve/koa-branch-router?branch=master)
 
