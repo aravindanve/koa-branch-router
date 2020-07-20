@@ -6,6 +6,7 @@ const PathFragment = require('../lib/path-fragment');
 const Router = require('../lib/router');
 const Layer = require('../lib/layer');
 const { compactStack } = require('../lib/utils');
+const RouteFragment = require('../lib/route-fragment');
 
 describe('safeDecode', () => {
   it('decodes url encoded strings', () => {
@@ -88,6 +89,28 @@ describe('compactStack', () => {
         stack: [
           new CaptureAllFragment({ capture: 'rest', stack: [1, 2, 3, 4] }),
         ],
+      }),
+    ]);
+  });
+
+  it('merges two path fragments with empty paths', () => {
+    const stack = [
+      new PathFragment({
+        path: '',
+        stack: [1, 2],
+      }),
+      new PathFragment({
+        path: '',
+        stack: [3, 4],
+      }),
+    ];
+
+    const result = utils.compactStack(stack);
+
+    chai.expect(result).to.deep.eq([
+      new PathFragment({
+        path: '',
+        stack: [1, 2, 3, 4],
       }),
     ]);
   });
@@ -212,6 +235,21 @@ describe('compactStack', () => {
       new PathFragment({
         path: 'wut',
         stack: [3, 4],
+      }),
+    ];
+
+    const result = utils.compactStack(stack);
+
+    chai.expect(result).to.deep.eq(stack);
+  });
+
+  it('does not merge two route fragments', () => {
+    const stack = [
+      new RouteFragment({
+        prefix: '/hello',
+      }),
+      new RouteFragment({
+        prefix: '/hello',
       }),
     ];
 
