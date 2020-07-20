@@ -84,4 +84,36 @@ describe('Router', () => {
     chai.expect(wrong).to.not.have.been.called();
     chai.expect(next).to.have.been.called(2);
   });
+
+  it('works with nested routers and fragments', () => {
+    const wrong = chai.spy((ctx, next) => next());
+    const right = chai.spy((ctx, next) => next());
+    const next = chai.spy();
+
+    const dispatch = new Router()
+      .use(new Router.Fragment().use('/foobar', right))
+      .use(new Router().use('/foobar', wrong))
+      .use(
+        new Router()
+          .use('/foobar', right)
+          .use('/foo', right)
+          .get('/foobar', wrong)
+          .post('/foobar', right),
+      )
+      .use(
+        '/foobar',
+        new Router()
+          .post(right)
+          .use(new Router().post(right)) // deep nesting
+          .use(wrong),
+      )
+      .routes();
+
+    dispatch({ method: 'POST', path: '/foobar' }, next);
+    dispatch({ method: 'POST', path: '/foobar1' }, next);
+
+    chai.expect(right).to.have.been.called(6);
+    chai.expect(wrong).to.not.have.been.called();
+    chai.expect(next).to.have.been.called(2);
+  });
 });
