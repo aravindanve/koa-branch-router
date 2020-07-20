@@ -4,16 +4,31 @@
   "description": "Radix tree like router middleware for koa",
   "main": "lib/index.js",
   "types": "index.d.ts",
+  "author": "Aravindan Ve",
+  "homepage": "https://github.com/aravindanve/koa-branch-router#readme",
+  "license": "ISC",
   "files": [
     "lib",
     "index.d.ts"
   ],
   "scripts": {
-    "test": "mocha test/**/*.spec.js"
+    "test": "nyc mocha 'test/**/*.spec.js'"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/aravindanve/koa-branch-router.git"
+  "dependencies": {
+    "debug": "^4.1.1",
+    "koa-compose": "^4.1.0"
+  },
+  "devDependencies": {
+    "@types/koa": "^2.11.3",
+    "chai": "^4.2.0",
+    "chai-spies": "^1.0.0",
+    "eslint": "^7.5.0",
+    "eslint-config-prettier": "^6.11.0",
+    "koa": "^2.13.0",
+    "mocha": "^8.0.1",
+    "nyc": "^15.1.0",
+    "prettier": "^2.0.5",
+    "typescript": "^3.9.7"
   },
   "keywords": [
     "koa",
@@ -24,28 +39,24 @@
     "tree",
     "trie"
   ],
-  "author": "Aravindan Ve",
-  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aravindanve/koa-branch-router.git"
+  },
   "bugs": {
     "url": "https://github.com/aravindanve/koa-branch-router/issues"
   },
-  "homepage": "https://github.com/aravindanve/koa-branch-router#readme",
+  "nyc": {
+    "include": [
+      "lib/**/*.js"
+    ],
+    "reportDir": "coverage",
+    "reporter": [
+      "text",
+      "html"
+    ]
+  },
   "engines": {
     "node": ">= 12.8.0"
-  },
-  "dependencies": {
-    "debug": "^4.1.1",
-    "koa-compose": "^4.1.0"
-  },
-  "devDependencies": {
-    "@types/koa": "^2.11.3",
-    "chai": "^4.2.0",
-    "eslint": "^7.5.0",
-    "eslint-config-prettier": "^6.11.0",
-    "koa": "^2.13.0",
-    "mocha": "^8.0.1",
-    "nyc": "^15.1.0",
-    "prettier": "^2.0.5",
-    "typescript": "^3.9.7"
   }
 }
