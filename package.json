@@ -9,7 +9,8 @@
   "license": "ISC",
   "files": [
     "lib",
-    "index.d.ts"
+    "index.d.ts",
+    "tsconfig.json"
   ],
   "scripts": {
     "lint": "eslint .",
