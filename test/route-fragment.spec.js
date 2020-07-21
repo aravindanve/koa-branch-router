@@ -14,7 +14,7 @@ describe('RouteFragment', () => {
 
   it('exposes correct node type', () => {
     const fragment = new RouteFragment();
-    chai.expect(fragment.type).to.eq(tree.FRAGMENT_NODE);
+    chai.expect(fragment.type).to.eq(tree.TYPE.FRAGMENT_NODE);
   });
 
   it('exposes verbs', () => {
@@ -36,19 +36,22 @@ describe('RouteFragment', () => {
 
     chai.expect(fragment.chain).to.deep.eq([
       {
-        type: tree.LAYER,
+        type: tree.TYPE.LAYER,
         methods: [],
         isMiddleware: true,
+        endsWithSlash: false,
         handle: noop,
       },
       {
-        type: tree.STATIC_NODE,
+        type: tree.TYPE.STATIC_NODE,
         path: '/hello',
+        lowerCasePath: '/hello',
         chain: [
           {
-            type: tree.LAYER,
+            type: tree.TYPE.LAYER,
             methods: [],
             isMiddleware: true,
+            endsWithSlash: false,
             handle: noop,
           },
         ],
@@ -65,27 +68,37 @@ describe('RouteFragment', () => {
     fragment.post('/psst', noop);
 
     chai.expect(fragment.chain).to.deep.eq([
-      { type: tree.LAYER, methods: ['GET'], isMiddleware: false, handle: noop },
       {
-        type: tree.LAYER,
+        type: tree.TYPE.LAYER,
+        methods: ['GET'],
+        isMiddleware: false,
+        endsWithSlash: false,
+        handle: noop,
+      },
+      {
+        type: tree.TYPE.LAYER,
         methods: ['POST'],
         isMiddleware: false,
+        endsWithSlash: false,
         handle: noop,
       },
       {
-        type: tree.LAYER,
+        type: tree.TYPE.LAYER,
         methods: tree.METHODS,
         isMiddleware: false,
+        endsWithSlash: false,
         handle: noop,
       },
       {
-        type: tree.STATIC_NODE,
+        type: tree.TYPE.STATIC_NODE,
         path: '/psst',
+        lowerCasePath: '/psst',
         chain: [
           {
-            type: tree.LAYER,
+            type: tree.TYPE.LAYER,
             methods: ['POST'],
             isMiddleware: false,
+            endsWithSlash: false,
             handle: noop,
           },
         ],
@@ -101,15 +114,17 @@ describe('RouteFragment', () => {
 
     chai.expect(fragment.chain).to.deep.eq([
       {
-        type: tree.LAYER,
+        type: tree.TYPE.LAYER,
         methods: ['DELETE'],
         isMiddleware: false,
+        endsWithSlash: false,
         handle: noop,
       },
       {
-        type: tree.LAYER,
+        type: tree.TYPE.LAYER,
         methods: ['DELETE'],
         isMiddleware: false,
+        endsWithSlash: false,
         handle: noop,
       },
     ]);
@@ -125,35 +140,41 @@ describe('RouteFragment', () => {
 
     chai.expect(fragment.chain).to.deep.eq([
       {
-        type: tree.STATIC_NODE,
+        type: tree.TYPE.STATIC_NODE,
         path: '/prefix/a',
+        lowerCasePath: '/prefix/a',
         chain: [
           {
-            type: tree.LAYER,
+            type: tree.TYPE.LAYER,
             methods: ['GET'],
             isMiddleware: false,
+            endsWithSlash: false,
             handle: noop,
           },
           {
-            type: tree.LAYER,
+            type: tree.TYPE.LAYER,
             methods: ['POST'],
             isMiddleware: false,
+            endsWithSlash: false,
             handle: noop,
           },
           {
-            type: tree.LAYER,
+            type: tree.TYPE.LAYER,
             methods: tree.METHODS,
             isMiddleware: false,
+            endsWithSlash: false,
             handle: noop,
           },
           {
-            type: tree.STATIC_NODE,
+            type: tree.TYPE.STATIC_NODE,
             path: '/psst',
+            lowerCasePath: '/psst',
             chain: [
               {
-                type: tree.LAYER,
+                type: tree.TYPE.LAYER,
                 methods: ['POST'],
                 isMiddleware: false,
+                endsWithSlash: false,
                 handle: noop,
               },
             ],
@@ -170,17 +191,19 @@ describe('RouteFragment', () => {
 
     chai.expect(fragment.chain).to.deep.eq([
       {
-        type: tree.STATIC_NODE,
+        type: tree.TYPE.STATIC_NODE,
         path: '/user',
+        lowerCasePath: '/user',
         chain: [
           {
-            type: tree.WILDCARD_NODE,
+            type: tree.TYPE.WILDCARD_NODE,
             capture: '',
             chain: [
               {
-                type: tree.LAYER,
+                type: tree.TYPE.LAYER,
                 methods: ['POST'],
                 isMiddleware: false,
+                endsWithSlash: false,
                 handle: noop,
               },
             ],
@@ -197,17 +220,19 @@ describe('RouteFragment', () => {
 
     chai.expect(fragment.chain).to.deep.eq([
       {
-        type: tree.STATIC_NODE,
+        type: tree.TYPE.STATIC_NODE,
         path: '/user',
+        lowerCasePath: '/user',
         chain: [
           {
-            type: tree.WILDCARD_NODE,
+            type: tree.TYPE.WILDCARD_NODE,
             capture: 'userSuffix',
             chain: [
               {
-                type: tree.LAYER,
+                type: tree.TYPE.LAYER,
                 methods: ['PUT'],
                 isMiddleware: false,
+                endsWithSlash: false,
                 handle: noop,
               },
             ],
@@ -224,17 +249,19 @@ describe('RouteFragment', () => {
 
     chai.expect(fragment.chain).to.deep.eq([
       {
-        type: tree.STATIC_NODE,
+        type: tree.TYPE.STATIC_NODE,
         path: '/',
+        lowerCasePath: '/',
         chain: [
           {
-            type: tree.PARAMETER_NODE,
+            type: tree.TYPE.PARAMETER_NODE,
             capture: 'userId',
             chain: [
               {
-                type: tree.LAYER,
+                type: tree.TYPE.LAYER,
                 methods: ['GET'],
                 isMiddleware: false,
+                endsWithSlash: false,
                 handle: noop,
               },
             ],
@@ -251,25 +278,28 @@ describe('RouteFragment', () => {
 
     chai.expect(fragment.chain).to.deep.eq([
       {
-        type: tree.STATIC_NODE,
+        type: tree.TYPE.STATIC_NODE,
         path: 'users/',
+        lowerCasePath: 'users/',
         chain: [
           {
-            type: tree.PARAMETER_NODE,
+            type: tree.TYPE.PARAMETER_NODE,
             capture: 'userId',
             chain: [
               {
-                type: tree.STATIC_NODE,
+                type: tree.TYPE.STATIC_NODE,
                 path: 'items/',
+                lowerCasePath: 'items/',
                 chain: [
                   {
-                    type: tree.PARAMETER_NODE,
+                    type: tree.TYPE.PARAMETER_NODE,
                     capture: 'itemId',
                     chain: [
                       {
-                        type: tree.LAYER,
+                        type: tree.TYPE.LAYER,
                         methods: ['PUT'],
                         isMiddleware: false,
+                        endsWithSlash: false,
                         handle: noop,
                       },
                     ],
@@ -290,33 +320,37 @@ describe('RouteFragment', () => {
 
     chai.expect(fragment.chain).to.deep.eq([
       {
-        type: tree.STATIC_NODE,
+        type: tree.TYPE.STATIC_NODE,
         path: 'users/',
+        lowerCasePath: 'users/',
         chain: [
           {
-            type: tree.PARAMETER_NODE,
+            type: tree.TYPE.PARAMETER_NODE,
             capture: 'userId',
             chain: [
               {
-                type: tree.STATIC_NODE,
+                type: tree.TYPE.STATIC_NODE,
                 path: 'items/',
+                lowerCasePath: 'items/',
                 chain: [
                   {
-                    type: tree.PARAMETER_NODE,
+                    type: tree.TYPE.PARAMETER_NODE,
                     capture: 'itemId',
                     chain: [
                       {
-                        type: tree.STATIC_NODE,
+                        type: tree.TYPE.STATIC_NODE,
                         path: 'wild',
+                        lowerCasePath: 'wild',
                         chain: [
                           {
-                            type: tree.WILDCARD_NODE,
+                            type: tree.TYPE.WILDCARD_NODE,
                             capture: '',
                             chain: [
                               {
-                                type: tree.LAYER,
+                                type: tree.TYPE.LAYER,
                                 methods: ['PUT'],
                                 isMiddleware: false,
+                                endsWithSlash: false,
                                 handle: noop,
                               },
                             ],
@@ -339,33 +373,37 @@ describe('RouteFragment', () => {
 
     fragment.chain = [
       {
-        type: tree.STATIC_NODE,
+        type: tree.TYPE.STATIC_NODE,
         path: 'users/',
+        lowerCasePath: 'users/',
         chain: [
           {
-            type: tree.PARAMETER_NODE,
+            type: tree.TYPE.PARAMETER_NODE,
             capture: 'userId',
             chain: [
               {
-                type: tree.STATIC_NODE,
+                type: tree.TYPE.STATIC_NODE,
                 path: 'items/',
+                lowerCasePath: 'items/',
                 chain: [
                   {
-                    type: tree.PARAMETER_NODE,
+                    type: tree.TYPE.PARAMETER_NODE,
                     capture: 'itemId',
                     chain: [
                       {
-                        type: tree.STATIC_NODE,
+                        type: tree.TYPE.STATIC_NODE,
                         path: 'wild',
+                        lowerCasePath: 'wild',
                         chain: [
                           {
-                            type: tree.WILDCARD_NODE,
+                            type: tree.TYPE.WILDCARD_NODE,
                             capture: '',
                             chain: [
                               {
-                                type: tree.LAYER,
+                                type: tree.TYPE.LAYER,
                                 methods: ['PUT'],
                                 isMiddleware: false,
+                                endsWithSlash: false,
                                 handle: noop,
                               },
                             ],
@@ -386,34 +424,38 @@ describe('RouteFragment', () => {
 
     chai.expect(fragment.chain).to.deep.eq([
       {
-        type: tree.STATIC_NODE,
+        type: tree.TYPE.STATIC_NODE,
         path: 'users/',
+        lowerCasePath: 'users/',
         chain: [
           {
-            type: tree.PARAMETER_NODE,
+            type: tree.TYPE.PARAMETER_NODE,
             capture: 'userId',
             chain: [
               {
-                type: tree.STATIC_NODE,
+                type: tree.TYPE.STATIC_NODE,
                 path: 'items/',
+                lowerCasePath: 'items/',
                 chain: [
                   {
-                    type: tree.PARAMETER_NODE,
+                    type: tree.TYPE.PARAMETER_NODE,
 
                     capture: 'itemId',
                     chain: [
                       {
-                        type: tree.STATIC_NODE,
+                        type: tree.TYPE.STATIC_NODE,
                         path: 'wild',
+                        lowerCasePath: 'wild',
                         chain: [
                           {
-                            type: tree.WILDCARD_NODE,
+                            type: tree.TYPE.WILDCARD_NODE,
                             capture: '',
                             chain: [
                               {
-                                type: tree.LAYER,
+                                type: tree.TYPE.LAYER,
                                 methods: ['PUT'],
                                 isMiddleware: false,
+                                endsWithSlash: false,
                                 handle: noop,
                               },
                             ],
@@ -423,13 +465,15 @@ describe('RouteFragment', () => {
                     ],
                   },
                   {
-                    type: tree.STATIC_NODE,
+                    type: tree.TYPE.STATIC_NODE,
                     path: 'item',
+                    lowerCasePath: 'item',
                     chain: [
                       {
-                        type: tree.LAYER,
+                        type: tree.TYPE.LAYER,
                         methods: ['PUT'],
                         isMiddleware: false,
+                        endsWithSlash: false,
                         handle: noop,
                       },
                     ],

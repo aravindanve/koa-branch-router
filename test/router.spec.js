@@ -1,5 +1,6 @@
 const chai = require('chai');
 const chaiSpies = require('chai-spies');
+const tree = require('../lib/tree');
 const Router = require('../lib/router');
 
 chai.use(chaiSpies);
@@ -15,6 +16,11 @@ describe('Router', () => {
     chai
       .expect(new Router({ capture: '', stack: [] }))
       .to.be.an.instanceof(Router);
+  });
+
+  it('exposes correct node type', () => {
+    const fragment = new Router();
+    chai.expect(fragment.type).to.eq(tree.TYPE.BOUNDARY_NODE);
   });
 
   it('.lookup() returns only matched handles', (done) => {
