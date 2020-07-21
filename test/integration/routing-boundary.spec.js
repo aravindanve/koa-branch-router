@@ -2,7 +2,7 @@ const supertest = require('supertest');
 const Koa = require('koa');
 const Router = require('../..');
 
-describe('Routing Boundary', () => {
+describe('Routing boundary', () => {
   let app;
   beforeEach(() => {
     const callback = (id) => (ctx, next) => {

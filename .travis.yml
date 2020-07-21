@@ -10,7 +10,7 @@ before_script:
 - npm prune
 script:
 - npm run lint
-- npm run test
+- npm run test:nyc
 - npm run perf
 after_script:
 - nyc report --reporter=text-lcov | coveralls
