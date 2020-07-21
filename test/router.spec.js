@@ -4,6 +4,12 @@ const Router = require('../lib/router');
 
 chai.use(chaiSpies);
 
+const push = (it) => (ctx, next) => {
+  ctx.body = ctx.body || [];
+  ctx.body.push(it);
+  return next();
+};
+
 describe('Router', () => {
   it('can be initialized', () => {
     chai
@@ -11,60 +17,58 @@ describe('Router', () => {
       .to.be.an.instanceof(Router);
   });
 
-  it('.layers() returns only matched handles', () => {
+  it('.lookup() returns only matched handles', (done) => {
     const router = new Router()
-      .use('/foobar', () => 1)
-      .use('/foo', () => 2)
-      .use('/foobaz', () => 3)
-      .get('/foobar', () => 4)
-      .post('/foobar', () => 5);
+      .use('/foobar', push(1))
+      .use('/foo', push(2))
+      .use('/foobaz', push(3))
+      .get('/foobar', push(4))
+      .post('/foobar', push(5));
 
-    const layers = router.layers('POST', '/foobar', {});
+    const handle = router.lookup('POST', '/foobar');
 
-    chai.expect(layers.map(({ handle, ...rest }) => rest)).to.deep.eq([
-      { params: {}, methods: [] },
-      { params: {}, methods: [] },
-      { params: {}, methods: ['POST'] },
-    ]);
+    chai.expect(handle).to.be.a('function');
 
-    chai.expect(layers.map((layer) => layer.handle())).to.deep.eq([1, 2, 5]);
+    handle({}, ({ body }) => {
+      chai.expect(body).to.deep.eq([1, 2, 5]);
+      done();
+    });
   });
 
-  it('.layers() returns only layers until the last matched handler', () => {
+  it('.lookup() matches all middleware if a handler matches', (done) => {
     const router = new Router()
-      .use('/foobar', () => 1)
-      .use('/foo', () => 2)
-      .use('/foobaz', () => 3)
-      .get('/foobar', () => 4)
-      .post('/foobar', () => 5)
-      .use('/foo', () => 6); // <-- should not be returned
+      .use('/foobar', push(1))
+      .use('/foo', push(2))
+      .use('/foobaz', push(3))
+      .get('/foobar', push(4))
+      .post('/foobar', push(5))
+      .use('/foo', push(6)); // <-- should also match
 
-    const layers = router.layers('POST', '/foobar', {});
+    const handle = router.lookup('POST', '/foobar');
 
-    chai.expect(layers.map(({ handle, ...rest }) => rest)).to.deep.eq([
-      { params: {}, methods: [] },
-      { params: {}, methods: [] },
-      { params: {}, methods: ['POST'] },
-    ]);
+    chai.expect(handle).to.be.a('function');
 
-    chai.expect(layers.map((layer) => layer.handle())).to.deep.eq([1, 2, 5]);
+    handle({}, ({ body }) => {
+      chai.expect(body).to.deep.eq([1, 2, 5, 6]);
+      done();
+    });
   });
 
-  it('.layers() returns empty array if no handlers matched', () => {
+  it('.lookup() returns undefined if no handlers matched', () => {
     const router = new Router()
-      .use('/foobar', () => 1)
-      .use('/foo', () => 2)
-      .use('/foobaz', () => 3)
-      .get('/foobar', () => 4)
-      .post('/foobar1', () => 5)
-      .use('/foo', () => 6);
+      .use('/foobar', push(1))
+      .use('/foo', push(2))
+      .use('/foobaz', push(3))
+      .get('/foobar', push(4))
+      .post('/foobar1', push(5))
+      .use('/foo', push(6));
 
-    const layers = router.layers('POST', '/foobar', {});
+    const handle = router.lookup('POST', '/foobar');
 
-    chai.expect(layers).to.deep.eq([]);
+    chai.expect(handle).to.be.undefined;
   });
 
-  it('.routes() returns a dispatcher', () => {
+  it('.routes() returns a middleware', () => {
     const wrong = chai.spy((ctx, next) => next());
     const right = chai.spy((ctx, next) => next());
     const next = chai.spy();
@@ -74,13 +78,13 @@ describe('Router', () => {
       .use('/foobaz', wrong)
       .get('/foobar', wrong)
       .post('/foobar', right)
-      .use('/foo', wrong)
+      .use('/foo', right)
       .routes();
 
     dispatch({ method: 'POST', path: '/foobar' }, next);
     dispatch({ method: 'POST', path: '/foobar1' }, next);
 
-    chai.expect(right).to.have.been.called(3);
+    chai.expect(right).to.have.been.called(4);
     chai.expect(wrong).to.not.have.been.called();
     chai.expect(next).to.have.been.called(2);
   });
@@ -100,13 +104,7 @@ describe('Router', () => {
           .get('/foobar', wrong)
           .post('/foobar', right),
       )
-      .use(
-        '/foobar',
-        new Router()
-          .post(right)
-          .use(new Router().post(right)) // deep nesting
-          .use(wrong),
-      )
+      .use('/foobar', new Router().post(right).use(new Router().post(right)))
       .routes();
 
     dispatch({ method: 'POST', path: '/foobar' }, next);
