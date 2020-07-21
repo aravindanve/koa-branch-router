@@ -14,7 +14,8 @@
   "scripts": {
     "lint": "eslint .",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json}\"",
-    "test": "nyc mocha 'test/**/*.spec.js'",
+    "test": "mocha 'test/**/*.spec.js'",
+    "test:nyc": "nyc mocha 'test/**/*.spec.js'",
     "perf": "node perf/index.js"
   },
   "dependencies": {
