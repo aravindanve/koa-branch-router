@@ -26,6 +26,7 @@
   "devDependencies": {
     "@types/koa": "^2.11.3",
     "chai": "^4.2.0",
+    "chai-samsam": "0.0.2",
     "chai-spies": "^1.0.0",
     "chalk": "^4.1.0",
     "coveralls": "^3.1.0",

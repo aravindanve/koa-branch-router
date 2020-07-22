@@ -334,15 +334,13 @@ describe('tree.concat()', () => {
 
     tree.concat(leftChain, rightChain);
 
-    chai
-      .expect(leftChain)
-      .to.deep.eq([
-        {
-          type: tree.TYPE.PARAMETER_NODE,
-          capture: 'userId',
-          chain: [1, 2, 3, 4],
-        },
-      ]);
+    chai.expect(leftChain).to.deep.eq([
+      {
+        type: tree.TYPE.PARAMETER_NODE,
+        capture: 'userId',
+        chain: [1, 2, 3, 4],
+      },
+    ]);
   });
 
   it('merges two parameter nodes recursively', () => {
@@ -612,14 +610,18 @@ describe('tree.concat()', () => {
   });
 
   it('does not merge two boundary nodes', () => {
-    const leftChain = [{ type: tree.TYPE.BOUNDARY_NODE, path: '/' }];
-    const rightChain = [{ type: tree.TYPE.BOUNDARY_NODE, path: '/' }];
+    const leftChain = [
+      { type: tree.TYPE.FRAGMENT_NODE, isBoundary: true, path: '/' },
+    ];
+    const rightChain = [
+      { type: tree.TYPE.FRAGMENT_NODE, isBoundary: true, path: '/' },
+    ];
 
     tree.concat(leftChain, rightChain);
 
     chai.expect(leftChain).to.deep.eq([
-      { type: tree.TYPE.BOUNDARY_NODE, path: '/' },
-      { type: tree.TYPE.BOUNDARY_NODE, path: '/' },
+      { type: tree.TYPE.FRAGMENT_NODE, isBoundary: true, path: '/' },
+      { type: tree.TYPE.FRAGMENT_NODE, isBoundary: true, path: '/' },
     ]);
   });
 
@@ -958,7 +960,7 @@ describe('tree.concat()', () => {
             lowerCasePath: '/wut',
             chain: [
               { type: tree.TYPE.WILDCARD_NODE, capture: '', chain: [3] },
-              { type: tree.TYPE.BOUNDARY_NODE, path: '/' },
+              { type: tree.TYPE.FRAGMENT_NODE, isBoundary: true, path: '/' },
             ],
           },
         ],
@@ -1025,7 +1027,7 @@ describe('tree.concat()', () => {
             lowerCasePath: '/wut',
             chain: [
               { type: tree.TYPE.WILDCARD_NODE, capture: '', chain: [3] },
-              { type: tree.TYPE.BOUNDARY_NODE, path: '/' },
+              { type: tree.TYPE.FRAGMENT_NODE, isBoundary: true, path: '/' },
               {
                 type: tree.TYPE.STATIC_NODE,
                 path: 'ismyname',
@@ -1513,7 +1515,8 @@ describe('tree.lookup()', () => {
       type: tree.TYPE.FRAGMENT_NODE,
       chain: [
         {
-          type: tree.TYPE.BOUNDARY_NODE,
+          type: tree.TYPE.FRAGMENT_NODE,
+          isBoundary: true,
           chain: [
             {
               type: tree.TYPE.LAYER,
@@ -1553,7 +1556,8 @@ describe('tree.lookup()', () => {
       type: tree.TYPE.FRAGMENT_NODE,
       chain: [
         {
-          type: tree.TYPE.BOUNDARY_NODE,
+          type: tree.TYPE.FRAGMENT_NODE,
+          isBoundary: true,
           chain: [
             {
               type: undefined,
@@ -1583,7 +1587,8 @@ describe('tree.lookup()', () => {
       type: tree.TYPE.FRAGMENT_NODE,
       chain: [
         {
-          type: tree.TYPE.BOUNDARY_NODE,
+          type: tree.TYPE.FRAGMENT_NODE,
+          isBoundary: true,
           chain: [
             {
               type: tree.TYPE.LAYER,
@@ -1600,7 +1605,8 @@ describe('tree.lookup()', () => {
               handle: right,
             },
             {
-              type: tree.TYPE.BOUNDARY_NODE,
+              type: tree.TYPE.FRAGMENT_NODE,
+              isBoundary: true,
               chain: [
                 {
                   type: tree.TYPE.LAYER,
@@ -1628,7 +1634,8 @@ describe('tree.lookup()', () => {
           ],
         },
         {
-          type: tree.TYPE.BOUNDARY_NODE,
+          type: tree.TYPE.FRAGMENT_NODE,
+          isBoundary: true,
           chain: [
             {
               type: tree.TYPE.LAYER,
@@ -1645,7 +1652,8 @@ describe('tree.lookup()', () => {
               handle: right,
             },
             {
-              type: tree.TYPE.BOUNDARY_NODE,
+              type: tree.TYPE.FRAGMENT_NODE,
+              isBoundary: true,
               chain: [
                 {
                   type: tree.TYPE.LAYER,
