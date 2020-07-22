@@ -34,7 +34,7 @@ app.listen(9000);
 
 ## Middleware Routing
 
-Middlewares are only called if a handler registered after the middleware __in the same router__ matches agaist the path.
+Middlewares are only called if a handler registered __in the same router__ matches agaist the path.
 
 #### Note
 
@@ -74,7 +74,7 @@ If you dont want this behaviour, you should use a route fragment.
 router
   .use('/users')
     .use(new Router.Fragment()
-      use(userMiddleware)) // <-- called
+      .use(userMiddleware)) // <-- called
 
       // fragments don't add a routing boundary and
       // behave like a middleware registered on the
