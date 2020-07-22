@@ -5,6 +5,7 @@ dist
 
 # coverage
 coverage
+.nyc_output
 
 # migrations
 migrations

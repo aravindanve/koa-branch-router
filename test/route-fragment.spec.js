@@ -1,9 +1,13 @@
 const chai = require('chai');
 const chaiSpies = require('chai-spies');
+const chaiSamSam = require('chai-samsam');
 const RouteFragment = require('../lib/route-fragment');
 const tree = require('../lib/tree');
 
+chai.use(chaiSamSam);
+
 chai.use(chaiSpies);
+chai.use(chaiSamSam);
 
 const noop = () => {};
 
@@ -15,9 +19,10 @@ describe('RouteFragment', () => {
   it('exposes correct node type', () => {
     const fragment = new RouteFragment();
     chai.expect(fragment.type).to.eq(tree.TYPE.FRAGMENT_NODE);
+    chai.expect(fragment.isBoundary).to.eq(false);
   });
 
-  it('exposes verbs', () => {
+  it('exposes .verb()s, .all() and .use()', () => {
     const fragment = new RouteFragment();
 
     chai.expect(fragment.get).to.be.a('function');
@@ -26,157 +31,135 @@ describe('RouteFragment', () => {
     chai.expect(fragment.patch).to.be.a('function');
     chai.expect(fragment.delete).to.be.a('function');
     chai.expect(fragment.del).to.be.a('function');
+    chai.expect(fragment.all).to.be.a('function');
+    chai.expect(fragment.use).to.be.a('function');
   });
 
-  it('.use() adds middleware correctly', () => {
+  it('supports .get()', () => {
     const fragment = new RouteFragment();
 
-    fragment.use(noop);
-    fragment.use('/hello', noop);
-
-    chai.expect(fragment.chain).to.deep.eq([
-      {
-        type: tree.TYPE.LAYER,
-        methods: [],
-        isMiddleware: true,
-        endsWithSlash: false,
-        handle: noop,
-      },
-      {
-        type: tree.TYPE.STATIC_NODE,
-        path: '/hello',
-        lowerCasePath: '/hello',
-        chain: [
-          {
-            type: tree.TYPE.LAYER,
-            methods: [],
-            isMiddleware: true,
-            endsWithSlash: false,
-            handle: noop,
-          },
-        ],
-      },
-    ]);
-  });
-
-  it('.verb() adds handlers correctly', () => {
-    const fragment = new RouteFragment();
-
+    fragment.get('/hey', noop);
     fragment.get(noop);
-    fragment.post(noop);
-    fragment.all(noop);
-    fragment.post('/psst', noop);
 
-    chai.expect(fragment.chain).to.deep.eq([
-      {
-        type: tree.TYPE.LAYER,
-        methods: ['GET'],
-        isMiddleware: false,
-        endsWithSlash: false,
-        handle: noop,
-      },
-      {
-        type: tree.TYPE.LAYER,
-        methods: ['POST'],
-        isMiddleware: false,
-        endsWithSlash: false,
-        handle: noop,
-      },
-      {
-        type: tree.TYPE.LAYER,
-        methods: tree.METHODS,
-        isMiddleware: false,
-        endsWithSlash: false,
-        handle: noop,
-      },
-      {
-        type: tree.TYPE.STATIC_NODE,
-        path: '/psst',
-        lowerCasePath: '/psst',
-        chain: [
-          {
-            type: tree.TYPE.LAYER,
-            methods: ['POST'],
-            isMiddleware: false,
-            endsWithSlash: false,
-            handle: noop,
-          },
-        ],
-      },
-    ]);
+    chai
+      .expect(fragment.chain)
+      .to.deep.match([
+        { path: '/hey', chain: [{ methods: ['GET'] }] },
+        { methods: ['GET'] },
+      ]);
   });
 
-  it('.del() does the same thing as .delete()', () => {
+  it('supports .post()', () => {
     const fragment = new RouteFragment();
 
+    fragment.post('/hey', noop);
+    fragment.post(noop);
+
+    chai
+      .expect(fragment.chain)
+      .to.deep.match([
+        { path: '/hey', chain: [{ methods: ['POST'] }] },
+        { methods: ['POST'] },
+      ]);
+  });
+
+  it('supports .patch()', () => {
+    const fragment = new RouteFragment();
+
+    fragment.patch('/hey', noop);
+    fragment.patch(noop);
+
+    chai
+      .expect(fragment.chain)
+      .to.deep.match([
+        { path: '/hey', chain: [{ methods: ['PATCH'] }] },
+        { methods: ['PATCH'] },
+      ]);
+  });
+
+  it('supports .put()', () => {
+    const fragment = new RouteFragment();
+
+    fragment.put('/hey', noop);
+    fragment.put(noop);
+
+    chai
+      .expect(fragment.chain)
+      .to.deep.match([
+        { path: '/hey', chain: [{ methods: ['PUT'] }] },
+        { methods: ['PUT'] },
+      ]);
+  });
+
+  it('supports .delete()', () => {
+    const fragment = new RouteFragment();
+
+    fragment.delete('/hey', noop);
     fragment.delete(noop);
+
+    chai
+      .expect(fragment.chain)
+      .to.deep.match([
+        { path: '/hey', chain: [{ methods: ['DELETE'] }] },
+        { methods: ['DELETE'] },
+      ]);
+  });
+
+  it('supports .del()', () => {
+    const fragment = new RouteFragment();
+
+    fragment.del('/hey', noop);
     fragment.del(noop);
 
-    chai.expect(fragment.chain).to.deep.eq([
-      {
-        type: tree.TYPE.LAYER,
-        methods: ['DELETE'],
-        isMiddleware: false,
-        endsWithSlash: false,
-        handle: noop,
-      },
-      {
-        type: tree.TYPE.LAYER,
-        methods: ['DELETE'],
-        isMiddleware: false,
-        endsWithSlash: false,
-        handle: noop,
-      },
-    ]);
+    chai
+      .expect(fragment.chain)
+      .to.deep.match([
+        { path: '/hey', chain: [{ methods: ['DELETE'] }] },
+        { methods: ['DELETE'] },
+      ]);
   });
 
-  it('option.prefix adds the prefix to all handles', () => {
-    const fragment = new RouteFragment({ prefix: '/prefix/a' });
+  it('supports .all()', () => {
+    const fragment = new RouteFragment();
 
-    fragment.get(noop);
-    fragment.post(noop);
+    fragment.all('/hey', noop);
     fragment.all(noop);
-    fragment.post('/psst', noop);
 
-    chai.expect(fragment.chain).to.deep.eq([
+    chai
+      .expect(fragment.chain)
+      .to.deep.match([
+        { path: '/hey', chain: [{ methods: tree.METHODS }] },
+        { methods: tree.METHODS },
+      ]);
+  });
+
+  it('supports .use()', () => {
+    const fragment = new RouteFragment();
+
+    fragment.use('/hey', noop);
+    fragment.use(noop);
+
+    chai
+      .expect(fragment.chain)
+      .to.deep.match([
+        { path: '/hey', chain: [{ isMiddleware: true }] },
+        { isMiddleware: true },
+      ]);
+  });
+
+  it('supports nested fragments', () => {
+    const fragment = new RouteFragment();
+
+    fragment.use('/hey', new RouteFragment().use(noop).get('/there', noop));
+
+    chai.expect(fragment.chain).to.deep.match([
       {
-        type: tree.TYPE.STATIC_NODE,
-        path: '/prefix/a',
-        lowerCasePath: '/prefix/a',
+        path: '/hey',
         chain: [
           {
-            type: tree.TYPE.LAYER,
-            methods: ['GET'],
-            isMiddleware: false,
-            endsWithSlash: false,
-            handle: noop,
-          },
-          {
-            type: tree.TYPE.LAYER,
-            methods: ['POST'],
-            isMiddleware: false,
-            endsWithSlash: false,
-            handle: noop,
-          },
-          {
-            type: tree.TYPE.LAYER,
-            methods: tree.METHODS,
-            isMiddleware: false,
-            endsWithSlash: false,
-            handle: noop,
-          },
-          {
-            type: tree.TYPE.STATIC_NODE,
-            path: '/psst',
-            lowerCasePath: '/psst',
             chain: [
-              {
-                type: tree.TYPE.LAYER,
-                methods: ['POST'],
-                isMiddleware: false,
-                endsWithSlash: false,
-                handle: noop,
-              },
+              { isMiddleware: true },
+              { path: '/there', chain: [{ methods: ['GET'] }] },
             ],
           },
         ],
@@ -184,304 +167,18 @@ describe('RouteFragment', () => {
     ]);
   });
 
-  it('.add() handles wildcards correctly', () => {
-    const fragment = new RouteFragment();
+  it('prefixes all the paths', () => {
+    const fragment = new RouteFragment({ prefix: '/pre' });
 
-    fragment.add(['POST'], '/user*', noop);
+    fragment.del('/hey', noop);
+    fragment.del(noop);
 
-    chai.expect(fragment.chain).to.deep.eq([
+    chai.expect(fragment.chain).to.deep.match([
       {
-        type: tree.TYPE.STATIC_NODE,
-        path: '/user',
-        lowerCasePath: '/user',
+        path: '/pre',
         chain: [
-          {
-            type: tree.TYPE.WILDCARD_NODE,
-            capture: '',
-            chain: [
-              {
-                type: tree.TYPE.LAYER,
-                methods: ['POST'],
-                isMiddleware: false,
-                endsWithSlash: false,
-                handle: noop,
-              },
-            ],
-          },
-        ],
-      },
-    ]);
-  });
-
-  it('.add() handles named wildcards correctly', () => {
-    const fragment = new RouteFragment();
-
-    fragment.add(['PUT'], '/user*userSuffix', noop);
-
-    chai.expect(fragment.chain).to.deep.eq([
-      {
-        type: tree.TYPE.STATIC_NODE,
-        path: '/user',
-        lowerCasePath: '/user',
-        chain: [
-          {
-            type: tree.TYPE.WILDCARD_NODE,
-            capture: 'userSuffix',
-            chain: [
-              {
-                type: tree.TYPE.LAYER,
-                methods: ['PUT'],
-                isMiddleware: false,
-                endsWithSlash: false,
-                handle: noop,
-              },
-            ],
-          },
-        ],
-      },
-    ]);
-  });
-
-  it('.add() handles named parameters correctly', () => {
-    const fragment = new RouteFragment();
-
-    fragment.add(['GET'], '/:userId', noop);
-
-    chai.expect(fragment.chain).to.deep.eq([
-      {
-        type: tree.TYPE.STATIC_NODE,
-        path: '/',
-        lowerCasePath: '/',
-        chain: [
-          {
-            type: tree.TYPE.PARAMETER_NODE,
-            capture: 'userId',
-            chain: [
-              {
-                type: tree.TYPE.LAYER,
-                methods: ['GET'],
-                isMiddleware: false,
-                endsWithSlash: false,
-                handle: noop,
-              },
-            ],
-          },
-        ],
-      },
-    ]);
-  });
-
-  it('.add() handles multiple named parameters correctly', () => {
-    const fragment = new RouteFragment();
-
-    fragment.add(['PUT'], 'users/:userId/items/:itemId', noop);
-
-    chai.expect(fragment.chain).to.deep.eq([
-      {
-        type: tree.TYPE.STATIC_NODE,
-        path: 'users/',
-        lowerCasePath: 'users/',
-        chain: [
-          {
-            type: tree.TYPE.PARAMETER_NODE,
-            capture: 'userId',
-            chain: [
-              {
-                type: tree.TYPE.STATIC_NODE,
-                path: 'items/',
-                lowerCasePath: 'items/',
-                chain: [
-                  {
-                    type: tree.TYPE.PARAMETER_NODE,
-                    capture: 'itemId',
-                    chain: [
-                      {
-                        type: tree.TYPE.LAYER,
-                        methods: ['PUT'],
-                        isMiddleware: false,
-                        endsWithSlash: false,
-                        handle: noop,
-                      },
-                    ],
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-      },
-    ]);
-  });
-
-  it('.add() handles mixed paths correctly', () => {
-    const fragment = new RouteFragment();
-
-    fragment.add(['PUT'], 'users/:userId/items/:itemId/wild*', noop);
-
-    chai.expect(fragment.chain).to.deep.eq([
-      {
-        type: tree.TYPE.STATIC_NODE,
-        path: 'users/',
-        lowerCasePath: 'users/',
-        chain: [
-          {
-            type: tree.TYPE.PARAMETER_NODE,
-            capture: 'userId',
-            chain: [
-              {
-                type: tree.TYPE.STATIC_NODE,
-                path: 'items/',
-                lowerCasePath: 'items/',
-                chain: [
-                  {
-                    type: tree.TYPE.PARAMETER_NODE,
-                    capture: 'itemId',
-                    chain: [
-                      {
-                        type: tree.TYPE.STATIC_NODE,
-                        path: 'wild',
-                        lowerCasePath: 'wild',
-                        chain: [
-                          {
-                            type: tree.TYPE.WILDCARD_NODE,
-                            capture: '',
-                            chain: [
-                              {
-                                type: tree.TYPE.LAYER,
-                                methods: ['PUT'],
-                                isMiddleware: false,
-                                endsWithSlash: false,
-                                handle: noop,
-                              },
-                            ],
-                          },
-                        ],
-                      },
-                    ],
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-      },
-    ]);
-  });
-
-  it('.add() compacts chain when new middleware is added', () => {
-    const fragment = new RouteFragment();
-
-    fragment.chain = [
-      {
-        type: tree.TYPE.STATIC_NODE,
-        path: 'users/',
-        lowerCasePath: 'users/',
-        chain: [
-          {
-            type: tree.TYPE.PARAMETER_NODE,
-            capture: 'userId',
-            chain: [
-              {
-                type: tree.TYPE.STATIC_NODE,
-                path: 'items/',
-                lowerCasePath: 'items/',
-                chain: [
-                  {
-                    type: tree.TYPE.PARAMETER_NODE,
-                    capture: 'itemId',
-                    chain: [
-                      {
-                        type: tree.TYPE.STATIC_NODE,
-                        path: 'wild',
-                        lowerCasePath: 'wild',
-                        chain: [
-                          {
-                            type: tree.TYPE.WILDCARD_NODE,
-                            capture: '',
-                            chain: [
-                              {
-                                type: tree.TYPE.LAYER,
-                                methods: ['PUT'],
-                                isMiddleware: false,
-                                endsWithSlash: false,
-                                handle: noop,
-                              },
-                            ],
-                          },
-                        ],
-                      },
-                    ],
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-      },
-    ];
-
-    fragment.add(['PUT'], 'users/:userId/items/item', noop);
-
-    chai.expect(fragment.chain).to.deep.eq([
-      {
-        type: tree.TYPE.STATIC_NODE,
-        path: 'users/',
-        lowerCasePath: 'users/',
-        chain: [
-          {
-            type: tree.TYPE.PARAMETER_NODE,
-            capture: 'userId',
-            chain: [
-              {
-                type: tree.TYPE.STATIC_NODE,
-                path: 'items/',
-                lowerCasePath: 'items/',
-                chain: [
-                  {
-                    type: tree.TYPE.PARAMETER_NODE,
-
-                    capture: 'itemId',
-                    chain: [
-                      {
-                        type: tree.TYPE.STATIC_NODE,
-                        path: 'wild',
-                        lowerCasePath: 'wild',
-                        chain: [
-                          {
-                            type: tree.TYPE.WILDCARD_NODE,
-                            capture: '',
-                            chain: [
-                              {
-                                type: tree.TYPE.LAYER,
-                                methods: ['PUT'],
-                                isMiddleware: false,
-                                endsWithSlash: false,
-                                handle: noop,
-                              },
-                            ],
-                          },
-                        ],
-                      },
-                    ],
-                  },
-                  {
-                    type: tree.TYPE.STATIC_NODE,
-                    path: 'item',
-                    lowerCasePath: 'item',
-                    chain: [
-                      {
-                        type: tree.TYPE.LAYER,
-                        methods: ['PUT'],
-                        isMiddleware: false,
-                        endsWithSlash: false,
-                        handle: noop,
-                      },
-                    ],
-                  },
-                ],
-              },
-            ],
-          },
+          { path: '/hey', chain: [{ methods: ['DELETE'] }] },
+          { methods: ['DELETE'] },
         ],
       },
     ]);
