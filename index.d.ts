@@ -45,6 +45,7 @@ declare class RouteFragment {
   all: Router.RegisterHandle;
   get: Router.RegisterHandle;
   post: Router.RegisterHandle;
+  patch: Router.RegisterHandle;
   put: Router.RegisterHandle;
   delete: Router.RegisterHandle;
   del: Router.RegisterHandle;
