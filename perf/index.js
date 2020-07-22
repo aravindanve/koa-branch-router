@@ -4,7 +4,12 @@ const { fork } = require('child_process');
 const { join } = require('path');
 const { Queue } = require('./utils');
 
-const benchmarks = ['flat.js', 'flat+handling.js'];
+const benchmarks = [
+  'flat.js',
+  'flat+handling.js',
+  'nested.js',
+  'nested+handling.js',
+];
 
 const queue = new Queue();
 
