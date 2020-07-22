@@ -72,9 +72,8 @@ If you dont want this behaviour, you should use a route fragment.
 // the path `/users/42/images`
 
 router
-  .use('/users')
-    .use(new Router.Fragment()
-      .use(userMiddleware)) // <-- called
+  .use('/users', new Router.Fragment()
+    .use(userMiddleware)) // <-- called
 
       // fragments don't add a routing boundary and
       // behave like a middleware registered on the
