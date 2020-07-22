@@ -2,6 +2,54 @@
 
 Benchmark cases taken from [Router Benchmarks by @delvedor](https://github.com/delvedor/router-benchmark)
 
+### 1.0.2
+
+```
+=============================
+ koa-branch-router benchmark
+=============================
+short static: 1,724,273 ops/sec
+static with same radix: 1,394,821 ops/sec
+dynamic route: 578,566 ops/sec
+mixed static dynamic: 585,552 ops/sec
+long static: 1,136,413 ops/sec
+wildcard: 1,314,565 ops/sec
+all together: 146,391 ops/sec
+
+==========================================================
+ koa-branch-router benchmark (WARNING: includes handling)
+==========================================================
+short static: 1,451,289 ops/sec
+static with same radix: 1,226,463 ops/sec
+dynamic route: 549,447 ops/sec
+mixed static dynamic: 570,400 ops/sec
+long static: 979,056 ops/sec
+wildcard: 1,128,197 ops/sec
+all together: 134,931 ops/sec
+
+====================================
+ koa-branch-router nested benchmark
+====================================
+short static: 1,046,224 ops/sec
+static with same radix: 957,560 ops/sec
+dynamic route: 445,160 ops/sec
+mixed static dynamic: 462,641 ops/sec
+long static: 892,005 ops/sec
+wildcard: 792,863 ops/sec
+all together: 100,375 ops/sec
+
+=================================================================
+ koa-branch-router nested benchmark (WARNING: includes handling)
+=================================================================
+short static: 931,397 ops/sec
+static with same radix: 865,637 ops/sec
+dynamic route: 421,822 ops/sec
+mixed static dynamic: 467,769 ops/sec
+long static: 839,301 ops/sec
+wildcard: 929,431 ops/sec
+all together: 100,860 ops/sec
+```
+
 ### 1.0.0-beta.3 (~ 4.3x beta.2)
 
 Nearly 4.3x performance improvement over beta.2 after replacing recursion with iteration.
