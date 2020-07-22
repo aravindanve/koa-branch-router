@@ -168,10 +168,6 @@ router.all('/users/*', ...)
 - Captured parameters are decoded using `decodeURIComponent`, whereas wildcard captures are not.
 - Named parameters assume trailing slash `:userId` => `:userId/`
 
-## Roadmap
-
-- Support for `405 method not allowed`
-
 ## API
 
 ### new Router([options])
