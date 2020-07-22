@@ -2,6 +2,57 @@
 
 Benchmark cases taken from [Router Benchmarks by @delvedor](https://github.com/delvedor/router-benchmark)
 
+
+### 1.0.3
+
+Marginal improvement in some metrics after removing two pass lookup in favor of single pass lookup.
+
+```
+=============================
+ koa-branch-router benchmark
+=============================
+short static: 1,876,267 ops/sec
+static with same radix: 1,524,041 ops/sec
+dynamic route: 563,580 ops/sec
+mixed static dynamic: 600,813 ops/sec
+long static: 1,220,339 ops/sec
+wildcard: 1,376,084 ops/sec
+all together: 154,851 ops/sec
+
+==========================================================
+ koa-branch-router benchmark (WARNING: includes handling)
+==========================================================
+short static: 1,516,434 ops/sec
+static with same radix: 1,271,850 ops/sec
+dynamic route: 569,076 ops/sec
+mixed static dynamic: 585,142 ops/sec
+long static: 1,066,773 ops/sec
+wildcard: 1,187,118 ops/sec
+all together: 141,027 ops/sec
+
+====================================
+ koa-branch-router nested benchmark
+====================================
+short static: 1,136,449 ops/sec
+static with same radix: 1,029,325 ops/sec
+dynamic route: 481,392 ops/sec
+mixed static dynamic: 514,809 ops/sec
+long static: 981,395 ops/sec
+wildcard: 1,089,155 ops/sec
+all together: 115,412 ops/sec
+
+=================================================================
+ koa-branch-router nested benchmark (WARNING: includes handling)
+=================================================================
+short static: 1,038,871 ops/sec
+static with same radix: 928,249 ops/sec
+dynamic route: 444,447 ops/sec
+mixed static dynamic: 484,259 ops/sec
+long static: 890,927 ops/sec
+wildcard: 933,389 ops/sec
+all together: 105,788 ops/sec
+```
+
 ### 1.0.2
 
 ```
