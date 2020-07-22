@@ -100,7 +100,7 @@ const userRouter = new Router()
   .use('/', listUsers) // becomes `/users/`
   .use('/:id', getUser); // becomes `/users/:id`
 
-const tokenRouter = new Router({ prefix: '/token' })
+const tokenRouter = new Router({ prefix: '/tokens' })
   .use('/', listUsers) // becomes `/auth/tokens/`
   .use('/:id', getUser); // becomes `/auth/tokens/:id`
 
