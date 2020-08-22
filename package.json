@@ -1,6 +1,6 @@
 {
   "name": "koa-branch-router",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Radix tree like router middleware for koa",
   "main": "lib/index.js",
   "types": "index.d.ts",
