@@ -252,20 +252,27 @@ describe('tree.insert()', () => {
             capture: 'lastName',
             chain: [
               {
-                type: tree.TYPE.PARAMETER_NODE,
-                capture: 'firstName',
+                type: tree.TYPE.STATIC_NODE,
+                path: '/',
+                lowerCasePath: '/',
                 chain: [
                   {
-                    type: tree.TYPE.STATIC_NODE,
-                    path: 'profile',
-                    lowerCasePath: 'profile',
+                    type: tree.TYPE.PARAMETER_NODE,
+                    capture: 'firstName',
                     chain: [
                       {
-                        type: tree.TYPE.LAYER,
-                        methods: ['GET'],
-                        isMiddleware: false,
-                        endsWithSlash: false,
-                        handle: noop,
+                        type: tree.TYPE.STATIC_NODE,
+                        path: '/profile',
+                        lowerCasePath: '/profile',
+                        chain: [
+                          {
+                            type: tree.TYPE.LAYER,
+                            methods: ['GET'],
+                            isMiddleware: false,
+                            endsWithSlash: false,
+                            handle: noop,
+                          },
+                        ],
                       },
                     ],
                   },
@@ -1260,15 +1267,22 @@ describe('tree.lookup()', () => {
               chain: [
                 {
                   type: tree.TYPE.STATIC_NODE,
-                  path: 'after',
-                  lowerCasePath: 'after',
+                  path: '/',
+                  lowerCasePath: '/',
                   chain: [
                     {
-                      type: tree.TYPE.LAYER,
-                      methods: ['POST'],
-                      isMiddleware: false,
-                      endsWithSlash: false,
-                      handle: noop,
+                      type: tree.TYPE.STATIC_NODE,
+                      path: 'after',
+                      lowerCasePath: 'after',
+                      chain: [
+                        {
+                          type: tree.TYPE.LAYER,
+                          methods: ['POST'],
+                          isMiddleware: false,
+                          endsWithSlash: false,
+                          handle: noop,
+                        },
+                      ],
                     },
                   ],
                 },
@@ -1307,15 +1321,22 @@ describe('tree.lookup()', () => {
               capture: 'firstName',
               chain: [
                 {
-                  type: tree.TYPE.PARAMETER_NODE,
-                  capture: 'lastName',
+                  type: tree.TYPE.STATIC_NODE,
+                  path: '/',
+                  lowerCasePath: '/',
                   chain: [
                     {
-                      type: tree.TYPE.LAYER,
-                      methods: ['POST'],
-                      isMiddleware: false,
-                      endsWithSlash: false,
-                      handle: noop,
+                      type: tree.TYPE.PARAMETER_NODE,
+                      capture: 'lastName',
+                      chain: [
+                        {
+                          type: tree.TYPE.LAYER,
+                          methods: ['POST'],
+                          isMiddleware: false,
+                          endsWithSlash: false,
+                          handle: noop,
+                        },
+                      ],
                     },
                   ],
                 },
@@ -1355,15 +1376,22 @@ describe('tree.lookup()', () => {
               capture: '',
               chain: [
                 {
-                  type: tree.TYPE.PARAMETER_NODE,
-                  capture: 'lastName',
+                  type: tree.TYPE.STATIC_NODE,
+                  path: '/',
+                  lowerCasePath: '/',
                   chain: [
                     {
-                      type: tree.TYPE.LAYER,
-                      methods: ['POST'],
-                      isMiddleware: false,
-                      endsWithSlash: false,
-                      handle: noop,
+                      type: tree.TYPE.PARAMETER_NODE,
+                      capture: 'lastName',
+                      chain: [
+                        {
+                          type: tree.TYPE.LAYER,
+                          methods: ['POST'],
+                          isMiddleware: false,
+                          endsWithSlash: false,
+                          handle: noop,
+                        },
+                      ],
                     },
                   ],
                 },

@@ -166,7 +166,6 @@ router.all('/users/*', ...)
 ## Quirks
 
 - Captured parameters are decoded using `decodeURIComponent`, whereas wildcard captures are not.
-- Named parameters assume trailing slash `:userId` => `:userId/`
 
 ## API
 
