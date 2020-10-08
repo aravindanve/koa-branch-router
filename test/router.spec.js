@@ -144,6 +144,16 @@ describe('Router', () => {
     chai.expect(router2.lookup('GET', '/hello/')).to.be.a('function');
   });
 
+  it('.lookup() handles strict routing with params correctly', () => {
+    const router1 = new Router({ strict: true }).get('/hello/:id', noop);
+    const router2 = new Router({ strict: true }).get('/hello/:id/', noop);
+
+    chai.expect(router1.lookup('GET', '/hello/1')).to.be.a('function');
+    chai.expect(router1.lookup('GET', '/hello/1/')).to.be.undefined;
+    chai.expect(router2.lookup('GET', '/hello/1')).to.be.undefined;
+    chai.expect(router2.lookup('GET', '/hello/1/')).to.be.a('function');
+  });
+
   it('.lookup() handles strict routing correctly with nesting', () => {
     const router = new Router().use(
       '/hello',
