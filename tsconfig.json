@@ -2,7 +2,6 @@
   "compilerOptions": {
     "lib": ["es2017"],
     "module": "commonjs",
-    "moduleResolution": "node",
     "noUnusedLocals": true,
     "noImplicitAny": true,
     "noImplicitThis": true,

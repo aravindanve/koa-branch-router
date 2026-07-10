@@ -1,5 +1,5 @@
-import * as Koa from 'koa';
-import * as Router from '..';
+import Koa from 'koa';
+import Router from '..';
 
 const app = new Koa();
 const noop = () => {};

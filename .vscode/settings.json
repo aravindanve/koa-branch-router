@@ -1,7 +1,7 @@
 {
   "editor.formatOnSave": false,
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
+    "source.fixAll.eslint": "always"
   },
   "[javascript]": {
     "editor.formatOnSave": true
@@ -21,6 +21,5 @@
   "[html]": {
     "editor.formatOnSave": true
   },
-  "javascript.preferences.importModuleSpecifier": "relative",
-  "typescript.preferences.importModuleSpecifier": "relative"
+  "js/ts.preferences.importModuleSpecifier": "relative"
 }
