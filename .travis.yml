@@ -13,7 +13,7 @@ script:
 - npm run test:nyc
 - npm run perf
 after_script:
-- nyc report --reporter=text-lcov | coveralls
+- nyc report --reporter=text-lcov | ./node_modules/coveralls-next/bin/coveralls.js
 - nyc check-coverage --lines 50
 notifications:
   email: false

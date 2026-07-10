@@ -1,4 +1,4 @@
-import * as Koa from 'koa';
+import Koa from 'koa';
 
 declare namespace Router {
   export type RouteHandle = Middleware | RouteFragment | Router;
